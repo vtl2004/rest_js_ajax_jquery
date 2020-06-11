@@ -57,10 +57,11 @@ public class UserRestController {
         return userService.updateUser(user);
     }
 
-    @GetMapping("delete/{id}")
-    public  void deleteUser(@PathVariable Long id) {
+    @PostMapping("delete")
+    public  void deleteUser(@RequestParam("id") Long id) {
         userService.deleteUser(id);
     }
+
 
     @GetMapping("/{id}")
     public User getById(@PathVariable Long id){
@@ -73,12 +74,4 @@ public class UserRestController {
 
         return roleService.findAllRoles();
     }
-
-    @GetMapping("/new/{username}{password}")
-    public User getUser(@PathVariable String username, @PathVariable String password){
-        return userService.getByUsernameAndPasswordService(username, password);
-    }
-
-
-
 }

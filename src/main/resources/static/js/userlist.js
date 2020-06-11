@@ -51,7 +51,7 @@ function getAllUsers() {
             let td = "";
             td += "<td>" + user.id + "</td>";
             td += "<td id='td" + user.id + "username'>" + user.username + "</td>";
-            td += "<td id='td" + user.id + "username'>" + user.password + "</td>";
+            td += "<td id='td" + user.id + "password'>" + user.password + "</td>";
             td += "<td id='td" + user.id + "first_name'>" + user.first_name + "</td>";
             td += "<td id='td" + user.id + "last_name'>" + user.last_name + "</td>";
             td += "<td id='td" + user.id + "email'>" + user.email + "</td>";
@@ -131,7 +131,17 @@ userEditForm.submit(function (event) {
 });
 function removeUser(id) {
     $("tr#tr" + id).remove();
-    $.get("/admin/users/delete/"+id);
+    $.ajax({
+        url: "/admin/users/delete",
+        method: "POST",
+        data: ({
+            id : id
+        })
+    });
+   /* $.get("/admin/users/delete/"+id);
+    $.post("/admin/users/delete", id_, function (g) {
+        alert(g);
+    });*/
 }
 
 function loadAllRoles(){
@@ -154,25 +164,55 @@ function loadAllRoles(){
 
 newFormUser.on("submit", function (event) {
     event.preventDefault();
-    let user = newFormUser.serialize();
-    newUserRole = user.roles;
-    $.post(newFormUser.attr("action"), user, function () {
-        getUserTable(newUserUsername.val(), newUserPassword.val());
-        newCloseButton.trigger("click");
-    });
-
-});
-
-function getUserTable(username, password) {
-    $.get("/admin/users/new/" + username + password, function (user) {
-
+    let user_ = newFormUser.serialize();
+    $.post(newFormUser.attr("action"), user_, function(user){
         let role = "";
-        let  userRoles = user.role;
-        for (role of userRoles) {
+        let userRoles = user.roles;
+        for (let j = 0; j< userRoles.length; j++) {
             role += userRoles[j].role + " ";
         }
-        var newTr = $("<tr id='tr" + user.id + "'></tr>");
-        var newTrTd = "";
+        let newTr = $("<tr id='tr" + user.id + "'></tr>");
+        let newTrTd = "";
+        newTrTd += "<td>" + user.id + "</td>";
+        newTrTd += "<td id='td" + user.id + "username'>" + user.username + "</td>";
+        newTrTd += "<td id='td" + user.id + "password'>" + user.password + "</td>";
+        newTrTd += "<td id='td" + user.id + "first_name'>" + user.first_name + "</td>";
+        newTrTd += "<td id='td" + user.id + "last_name'>" + user.last_name + "</td>";
+        newTrTd += "<td id='td" + user.id + "email'>" + user.email + "</td>";
+        newTrTd += "<td id='td" + user.id + "roles' class='text-uppercase'>" + role + "</td>";
+
+        newTrTd += "<td><div class='btn-group'>" +
+            "<button data-target='#editUser' data-toggle='modal' class='btn btn-primary'" +
+            "onclick='openEditUserModal(" + user.id + ")' data-userId='" + user.id + "'>Edit</button></div>" +
+            "<div class='btn-group'><button class='btn btn-danger' data-userId='" + user.id + "' onclick='removeUser(" + user.id + ")'>" +
+            "Delete</button></div></td>";
+        newTr.html(newTrTd);
+        userList.append(newTr);
+        newCloseButton.trigger("click");
+        $("#id").trigger("click");
+    });
+});
+
+
+    /*for(let i =0; i<data.length; i++){
+    let user = data[i];
+
+
+
+
+    }*/
+
+
+/*function getUserTable(username, password) {
+    $.get("/admin/users/new/" + username +"/" +password, function (user) {
+
+        let role = "";
+        let  userRoles = user.roles;
+        for (let j = 0; j< userRoles.length; j++) {
+            role += userRoles[j].role + " ";
+        }
+        let newTr = $("<tr id='tr" + user.id + "'></tr>");
+        let newTrTd = "";
         newTrTd += "<td>" + user.id + "</td>";
         newTrTd += "<td id='td" + user.id + "username'>" + user.username + "</td>";
         newTrTd += "<td id='td" + user.id + "password'>" + user.password + "</td>";
@@ -189,7 +229,7 @@ function getUserTable(username, password) {
         newTr.html(newTrTd);
         userList.append(newTr);
         newCloseButton.trigger("click");
-    })
-}
+    });
+}*/
 
 
